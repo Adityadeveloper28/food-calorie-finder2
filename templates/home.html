@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+{% load static %} {% load mathfilters %} {%load humanize%}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous" />
+        <link rel="stylesheet"
+        href=
+"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Calories Counter Webpage</title>
+    <link href="{% static 'style.css' %}" rel="stylesheet" type="text/css" />
+</head>
+<body style="background-repeat: no-repeat;
+background:url('{{query_row.image}}'),rgba(125, 34, 34, 0.641);
+background-size: 100%;
+background-position:center;
+
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover; 
+height: auto;>
+    <div class="center">
+
+
+        <div id="navlist" style="position:fixed;">
+            <h1 class="navt">FOOD CALORIE COUNTER</h1>
+            <div class="search">
+                <form method="post">
+                    {%csrf_token%}
+                    <input type="text"
+                    placeholder=" Search Courses"
+                    name="query">
+             <button>
+                 <i class="fa fa-search"
+                    style="font-size: 18px;">
+                 </i>
+             </button>
+                </form>
+            </div>
+        </div>
+        
+
+        {% if query_row == "oops! There was an error" %}
+        <div class="alert alert-warning" style=" "> Oh no! something went wrong.Please try again in sometime. </div>
+
+        {% else %}
+
+        <div class="name" style="padding: 0px;margin-top: 66px;">
+        <h1>{{api.0.name | capfirst}} {{query_row.name | capfirst}} has a total of <strong>
+                {{api.0.calories}}{{query_row.calories}} Calories</strong>
+            {%if api.0.calories > 200%}
+            <img src="{% static 'images/shocked.png' %}" class="img-responsive" />
+            {%endif%}
+        </h1>
+        </div>
+        {%if api.0.sodium_mg > 1000%}
+        <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+            <div>
+                This food contains an high amount of sodium. High Sodium causes Sever dehydration and water retention.
+            </div>
+        </div>
+        {%endif%}
+        {%if api.0.sugar_g > 100%}
+        <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+            <div>
+                This food contains an high amount of sugar. Sugar causes insulin spikes and is a no.1 cause for Obesity.
+            </div>
+        </div>
+        {%endif%}
+
+
+
+
+    </div>
+    <div id="calories" style="margin: 23px; ">
+        <div class="data" style=" 
+        border: solid;
+        border-width: 5px;
+        box-shadow: 0px 4px 16px rgba(0,0,0,0.8);
+        background: rgba(225,225,225, 0.6);
+        padding: 20px;
+        width: 800px;
+        height: 380px;
+        margin-right: 18px;
+        color: rgb(24, 22, 22);">
+            <h2 class="nut">Nutritional Values </h2><span></span>
+            <ul>
+                <li class="servingsize">Serving Size per 100/Grams <span class="float-end"></span></li>
+                <li>Carbohydrates: <span class="float-end">{{api.0.carbohydrates_total_g}}{{query_row.carbohydrates_total_g }}</span></li>
+                <li>Cholesterol: <span class="float-end">{{api.0.cholesterol_mg}}{{ query_row.cholesterol_mg }}</span>
+                </li>
+                <li>Saturated fat: <span class="float-end">{{api.0.fat_saturated_g}}{{ query_row.fat_saturated_g}}</span></li>
+                <li>Total Fat: <span class="float-end">{{api.0.fat_saturated_g}}{{ query_row.fat_saturated_g }}</span>
+                </li>
+                <li>Fiber Content: <span class="float-end">{{api.0.fat_total_g}}{{ query_row.fat_total_g }}</span></li>
+                <li>Potassium <span class="float-end">{{api.0.potassium_mg}}{{ query_row.potassium_mg }}</span></li>
+                <li>Protein: <span class="float-end">{{api.0.protein_g}}{{ query_row.protein_g }}</span></li>
+                <li>Sodium:<span class="float-end">{{api.0.sodium_mg}}{{ query_row.sodium_mg }}</span></li>
+                <li>Sugar: <span class="float-end">{{api.0.sugar_g}}{{ query_row.sugar_g }}</span></li>
+            </ul>
+        </div>
+        <div class="graph">
+            <canvas id="myChart" ></canvas>
+        </div>
+
+                                                                  </div class="loader"><div>
+    </div>
+    <div id="bt">
+        <div class="h4">
+        <h4 class="burn-n" style="font-size: 2.5rem; padding:2px;">  To burn {{api.0.calories}} {{ query_row.calories}} calories you will have to</h4>
+        </div>
+        <div id="burn" style="margin: 31px;margin-left: 93px;">
+                <div class="jog">
+                    <div class="flex">
+                        <img src="{% static 'images/running.png' %}" alt="...">
+                    </div>
+                    <div class="flex-grow">
+                        <h5> Jog </h5>
+
+                        <p id="result_run">you will have to jog for <strong>{{query_row.calories |div:229 |mul:60|floatformat:0}}</strong> Minutes</p>
+                    </div>
+
+                </div>
+                <div class="walk">
+                    <div class="flex">
+                        <img src="{% static 'images/walking.png' %}" alt="...">
+                    </div>
+                    <div class="flex-">
+                        <h5> Walk </h5>
+
+                        <p id="result_run">you will have to jog for <strong>{{query_row.calories |div:294|mul:60|floatformat:0}}</strong> Minutes</p>
+                    </div>
+
+                </div>
+                <div class="gym">
+                    <div class="flex">
+                        <img src="{% static 'images/weightlifter.png' %}" alt="...">
+                    </div>
+                    <div class="flex-grow">
+                        <h5> Gym </h5>
+
+                        <p>you will have to jog for <strong>{{query_row.calories |div:483|mul:60|floatformat:0}}</strong> Minutes</p>
+                    </div>
+
+                </div>
+                <div class="yoga">
+                    <div class="flex">
+                        <img src="{% static 'images/yoga.png' %}" alt="...">
+                    </div>
+                    <div class="flex-grow">
+                        <h5> yoga </h5>
+
+                        <p>you will have to jog for <strong>{{query_row.calories  |div:223|mul:60|floatformat:0}}</strong> Minutes</p>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    
+    </div>
+    
+    {% endif %}
+
+    </div>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"
+    integrity="sha512-sW/w8s4RWTdFFSduOTGtk4isV1+190E/GghVffMA9XczdJ2MDzSzLEubKAs5h0wzgSJOQTRYyaz73L3d6RtJSg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['carbohydrates', 'Cholesterol', 'Saturated fat', 'Total Fat', 'Fiber Content', 'Potassium', 'Protein', 'Sodium', 'Sugar'],
+                datasets: [{
+                    label: 'Nutritional values of {{api.0.name | capfirst}}{{query_row.name | capfirst}}',
+                    data: [
+                        '{{query_row.carbohydrates_total_g}}',
+                        '{{query_row.cholesterol_mg}}',
+                        '{{query_row.fat_saturated_g}}',
+                        '{{query_row.fat_saturated_g}}',
+                        '{{query_row.fat_total_g}}',
+                        '{{query_row.potassium_mg}}',
+                        '{{query_row.protein_g}}',
+                        '{{query_row.sodium_mg}}',
+                        '{{query_row.sugar}}',
+                    ],
+                    backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(153, 102, 255, 0.8)',
+                    'rgba(255, 159, 64, 0.8)'
+                    ],
+                    borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+    </script>
+    
+
+</html>
